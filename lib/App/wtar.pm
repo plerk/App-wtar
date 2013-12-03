@@ -3,6 +3,11 @@ package App::wtar;
 use strict;
 use warnings;
 use v5.10;
+use EV;
+use Net::Curl::Multi;
+use Net::Curl::Multi::EV;
+use Net::Curl::Easy qw( :constants );
+use AnyEvent;
 use Archive::Libarchive::Any qw( :all );
 use File::Strmode qw( strmode );
 use App::wtar::Constant;
@@ -52,13 +57,10 @@ sub main
       $r = archive_read_open_filename($archive, $filename, 10240);
       die "error opening file $filename: " . archive_error_string($archive) if $r != ARCHIVE_OK; # TODO
     }
-    elsif($opt->uri->scheme =~ /^https?$/)
+    elsif($opt->uri->scheme =~ /^(https?|ftp)$/)
     {
-      die 'FIXME';
-    }
-    elsif($opt->uri->scheme eq 'ftp')
-    {
-      die 'FIXME';
+      my $data = { opt => $opt };
+      archive_read_open($archive, $data, \&myopen, \&myread, \&myclose);
     }
     
     while(1)
@@ -123,10 +125,65 @@ sub _verbose
 
   sprintf "%s%s %s %5d %s",
     strmode(archive_entry_mode($entry)),
-    archive_entry_uname($entry),
-    archive_entry_gname($entry),
+    archive_entry_uname($entry)//'unknown',
+    archive_entry_gname($entry)//'unknown',
     archive_entry_size($entry),
     archive_entry_pathname($entry);
+}
+
+sub myopen
+{
+  my($archive, $data) = @_;
+  
+  $data->{buffer} = [];
+  $data->{cv1}    = AE::cv;
+  $data->{eof}    = 0;
+  
+  my $total = 0;
+  
+  my $curl = $data->{curl} = Net::Curl::Easy->new;
+  $curl->setopt( CURLOPT_URL, $data->{opt}->uri->as_string );
+  $curl->setopt( CURLOPT_WRITEDATA, $data );
+  $curl->setopt( CURLOPT_WRITEFUNCTION, sub {
+    my($curl, $buffer, $data) = @_;
+    push @{ $data->{buffer} }, $buffer;
+    $data->{cv1}->send;
+    length $buffer;
+  });
+  
+  my $multi = Net::Curl::Multi->new;
+  my $curl_ev = Net::Curl::Multi::EV::curl_ev($multi);
+  
+  $curl_ev->($curl, sub { $data->{eof} = 1 }, 4*60);
+  
+  ARCHIVE_OK;
+}
+
+sub myread
+{
+  my($archive, $data) = @_;
+  while(1)
+  {
+    if(@{ $data->{buffer} } > 0)
+    {
+      return (ARCHIVE_OK, shift @{ $data->{buffer} });
+    }
+    elsif($data->{eof})
+    {
+      return (ARCHIVE_OK, '');
+    }
+    else
+    {
+      $data->{cv1}->recv;
+      $data->{cv1} = AE::cv;
+    }
+  }
+}
+
+sub myclose
+{
+  my($archive, $data) = @_;
+  ARCHIVE_OK;
 }
 
 1;
