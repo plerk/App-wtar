@@ -14,7 +14,7 @@ use Path::Class ();
 sub _file_to_uri
 {
   my($class, $fn) = @_;
-  if($fn =~ m{^(ftp|http|gopher)://})
+  if($fn =~ m{^(ftp|http|gopher|file)://})
   { return URI->new($fn) }
   else
   {
