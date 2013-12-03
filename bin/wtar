@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use v5.10;
+use App::wtar;
+
+# ABSTRACT: Non-blocking combination of wget and tar
+# VERSION
+# PODNAME: wtar
+
+exit App::wtar->main(@ARGV);
+
+=head1 SYNOPSIS
+
+ % wtar xf http://example.com/foo.tar.gz
+
+=head1 DESCRIPTION
+
+Under construction!  Highly incomplete.
+
+=head1 OPTIONS
+
+=head2 -x --extract --get
+
+=head2 -t --list
+
+=head2 -f --file
+
+=head2 -v --verbose
+
+=cut

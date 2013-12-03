@@ -1,0 +1,10 @@
+Archive::Libarchive::Any
+Capture::Tiny
+Exporter::Tidy
+ExtUtils::MakeMaker
+File::Strmode
+Moo
+Path::Class
+Test::More
+URI
+URI::file
