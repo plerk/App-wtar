@@ -1,5 +1,4 @@
-package
-  App::wtar::Options;
+package App::wtar::Options;
 
 use strict;
 use warnings;
@@ -10,6 +9,9 @@ use App::wtar::Constant;
 use URI;
 use URI::file;
 use Path::Class ();
+
+# ABSTRACT: Option parser for wtar
+# VERSION
 
 sub _file_to_uri
 {
