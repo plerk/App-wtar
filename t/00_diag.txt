@@ -1,9 +1,13 @@
+AnyEvent
 Archive::Libarchive::Any
 Capture::Tiny
+EV
 Exporter::Tidy
 ExtUtils::MakeMaker
-File::Strmode
 Moo
+Net::Curl::Easy
+Net::Curl::Multi
+Net::Curl::Multi::EV
 Path::Class
 Test::More
 URI

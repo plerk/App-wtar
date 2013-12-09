@@ -9,7 +9,6 @@ use Net::Curl::Multi::EV;
 use Net::Curl::Easy qw( :constants );
 use AnyEvent;
 use Archive::Libarchive::Any qw( :all );
-use File::Strmode qw( strmode );
 use App::wtar::Constant;
 use App::wtar::Options;
 
@@ -60,7 +59,7 @@ sub main
     elsif($opt->uri->scheme =~ /^(https?|ftp)$/)
     {
       my $data = { opt => $opt };
-      archive_read_open($archive, $data, \&myopen, \&myread, \&myclose);
+      archive_read_open($archive, $data, \&_myopen, \&_myread, \&_myclose);
     }
     
     while(1)
@@ -124,14 +123,14 @@ sub _verbose
   # TODO: also print out the time/date
 
   sprintf "%s%s %s %5d %s",
-    strmode(archive_entry_mode($entry)),
-    archive_entry_uname($entry)//'unknown',
-    archive_entry_gname($entry)//'unknown',
+    archive_entry_strmode($entry),
+    archive_entry_uname($entry)//archive_entry_uid($entry)//'unknown',
+    archive_entry_gname($entry)//archive_entry_gid($entry)//'unknown',
     archive_entry_size($entry),
     archive_entry_pathname($entry);
 }
 
-sub myopen
+sub _myopen
 {
   my($archive, $data) = @_;
   
@@ -159,7 +158,7 @@ sub myopen
   ARCHIVE_OK;
 }
 
-sub myread
+sub _myread
 {
   my($archive, $data) = @_;
   while(1)
@@ -180,7 +179,7 @@ sub myread
   }
 }
 
-sub myclose
+sub _myclose
 {
   my($archive, $data) = @_;
   ARCHIVE_OK;
