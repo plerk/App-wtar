@@ -19,6 +19,20 @@ use App::wtar::Options;
 
 This module contains the machinery for L<wtar>.
 
+=head1 METHODS
+
+=head2 main
+
+The main class method for this package allows you to run wtar
+without forking.  It returns a status value which should be 
+zero (0) on success.
+
+ App::wtar->main('tvf', 'http://example.com/foo.tar.gz');
+
+is the same as
+
+ % wtar tvf http://example.com/foo.tar.gz
+
 =head1 SEE ALSO
 
 L<wtar>
