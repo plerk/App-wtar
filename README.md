@@ -12,13 +12,13 @@ Under construction!  Highly incomplete.
 
 # OPTIONS
 
-## \-x --extract --get
+## -x --extract --get
 
-## \-t --list
+## -t --list
 
-## \-f --file
+## -f --file
 
-## \-v --verbose
+## -v --verbose
 
 # AUTHOR
 
