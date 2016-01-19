@@ -2,7 +2,7 @@ package App::wtar;
 
 use strict;
 use warnings;
-use v5.10;
+use 5.010;
 use EV;
 use Net::Curl::Multi;
 use Net::Curl::Multi::EV;

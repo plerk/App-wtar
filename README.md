@@ -1,4 +1,4 @@
-# wtar
+# wtar [![Build Status](https://secure.travis-ci.org/plicease/App-wtar.png)](http://travis-ci.org/plicease/App-wtar)
 
 Non-blocking combination of wget and tar
 
@@ -22,7 +22,7 @@ Under construction!  Highly incomplete.
 
 # AUTHOR
 
-Graham Ollis <plicease@cpan.org>
+Graham Ollis &lt;plicease@cpan.org>
 
 # COPYRIGHT AND LICENSE
 
